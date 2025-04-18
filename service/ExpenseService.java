@@ -63,6 +63,25 @@ public class ExpenseService {
             System.out.printf("%s paid $%.2f to %s. Remaining: $%.2f%n", payer.getName(), amount, payee.getName(), currentOwed - amount);
         }
     }
+    public void addCustomExpense(User payer, double amount, List<User> participants, String description, Map<User, Double> splits) {
+        Map<User, Double> splitMap = new HashMap<>();
+    
+        for (User participant : participants) {
+            if (!participant.equals(payer)) {
+                double share = splits.getOrDefault(participant, 0.0);
+                splitMap.put(participant, share);
+                updateBalance(payer, participant, share);
+            }
+        }
+    
+        Expense expense = new Expense(description, payer, amount, participants, splitMap);
+        FileHandler.saveExpenseToFile(expense, "data/expenses.json");
+        System.out.println("✅ Expense added: " + expense.getDescription());
+    }
+    
+    public Map<User, Map<User, Double>> getBalances() {
+        return balances;
+    }
     
     
 }

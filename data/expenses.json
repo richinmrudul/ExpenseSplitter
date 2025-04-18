@@ -1,11 +1,90 @@
 {
-  "description": "food",
+  "description": "sda",
   "payer": "Richin",
   "amount": 1000.0,
   "participants": [
-    "Adwin"
+    "Richin",
+    "Yathin"
   ],
   "splitDetails": {
-    "Adwin": 1000.0
+    "Yathin": 500.0
+  }
+},
+{
+  "description": "tuition",
+  "payer": "richi",
+  "amount": 1000.0,
+  "participants": [
+    "richi",
+    "yathi"
+  ],
+  "splitDetails": {
+    "yathi": 500.0
+  }
+},
+{
+  "description": "hello",
+  "payer": "Richin",
+  "amount": 1000.0,
+  "participants": [
+    "Richin",
+    "yathin"
+  ],
+  "splitDetails": {
+    "yathin": 500.0
+  }
+},
+{
+  "description": "food",
+  "payer": "dog",
+  "amount": 20.0,
+  "participants": [
+    "richin",
+    "mrudul",
+    "dog"
+  ],
+  "splitDetails": {
+    "mrudul": 6.666666666666667,
+    "richin": 6.666666666666667
+  }
+},
+{
+  "description": "helo",
+  "payer": "mrudul",
+  "amount": 100000.0,
+  "participants": [
+    "richin",
+    "dog",
+    "mrudul"
+  ],
+  "splitDetails": {
+    "dog": 33333.333333333336,
+    "richin": 33333.333333333336
+  }
+},
+{
+  "description": "0",
+  "payer": "richin",
+  "amount": 100.0,
+  "participants": [
+    "mrudul",
+    "richin"
+  ],
+  "splitDetails": {
+    "mrudul": 50.0
+  }
+},
+{
+  "description": "dog",
+  "payer": "mrudul",
+  "amount": 190.0,
+  "participants": [
+    "richin",
+    "acha",
+    "mrudul"
+  ],
+  "splitDetails": {
+    "acha": 63.333333333333336,
+    "richin": 63.333333333333336
   }
 },

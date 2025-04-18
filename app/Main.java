@@ -6,14 +6,17 @@ import service.ExpenseService;
 import util.FileHandler;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         FileHandler.clearFile("data/expenses.json");
 
-        List<User> allUsers = new ArrayList<>();
-        Map<String, User> userMap = new HashMap<>();
+        List<User> allUsers = FileHandler.loadUsers("data/users.json");
+        Map<String, User> userMap = allUsers.stream()
+            .collect(Collectors.toMap(u -> u.getName().toLowerCase(), u -> u));
+
         Group group = new Group("Default Group");
         ExpenseService expenseService = new ExpenseService();
 
@@ -50,6 +53,7 @@ public class Main {
                     userMap.put(key, user);
                     group.addUser(user);
                     System.out.println("✅ User added: " + name);
+                    FileHandler.saveUsers(allUsers, "data/users.json");
                 }
 
                 case 1 -> {
@@ -91,7 +95,61 @@ public class Main {
                         break;
                     }
 
-                    expenseService.addExpense(payer, amount, participants, description);
+                    System.out.println("Split type:");
+                    System.out.println("1. Equally");
+                    System.out.println("2. By Exact Amount");
+                    System.out.println("3. By Percentage");
+                    System.out.print("Choose split type: ");
+                    int splitType = Integer.parseInt(scanner.nextLine());
+                    
+                    switch (splitType) {
+                        case 1 -> expenseService.addExpense(payer, amount, participants, description);
+                    
+                        case 2 -> {
+                            Map<User, Double> exactSplits = new HashMap<>();
+                            double total = 0.0;
+                    
+                            for (User user : participants) {
+                                System.out.print("Enter amount for " + user.getName() + ": ");
+                                double amt = Double.parseDouble(scanner.nextLine());
+                                exactSplits.put(user, amt);
+                                total += amt;
+                            }
+                    
+                            if (Math.abs(total - amount) > 0.01) {
+                                System.out.println("❌ Error: Entered amounts do not match total.");
+                            } else {
+                                expenseService.addCustomExpense(payer, amount, participants, description, exactSplits);
+                            }
+                        }
+                    
+                        case 3 -> {
+                            Map<User, Double> percentSplits = new HashMap<>();
+                            double totalPercent = 0.0;
+                    
+                            for (User user : participants) {
+                                System.out.print("Enter percentage for " + user.getName() + ": ");
+                                double pct = Double.parseDouble(scanner.nextLine());
+                                percentSplits.put(user, pct);
+                                totalPercent += pct;
+                            }
+                    
+                            if (Math.abs(totalPercent - 100.0) > 0.01) {
+                                System.out.println("❌ Error: Percentages must add up to 100%.");
+                            } else {
+                                Map<User, Double> computedSplits = new HashMap<>();
+                                for (User user : percentSplits.keySet()) {
+                                    double share = (percentSplits.get(user) / 100.0) * amount;
+                                    computedSplits.put(user, Math.round(share * 100.0) / 100.0);
+                                }
+                    
+                                expenseService.addCustomExpense(payer, amount, participants, description, computedSplits);
+                            }
+                        }
+                    
+                        default -> System.out.println("❌ Invalid split type.");
+                    }
+                    
                 }
 
                 case 2 -> {

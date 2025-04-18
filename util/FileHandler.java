@@ -3,12 +3,19 @@ package util;
 import model.Expense;
 import model.User;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FileHandler {
+
+    public static void clearFile(String filePath) {
+        try (FileWriter fw = new FileWriter(filePath, false)) {
+            fw.write("");
+        } catch (IOException e) {
+            System.out.println("Error clearing file: " + e.getMessage());
+        }
+    }
 
     public static void saveExpenseToFile(Expense expense, String filePath) {
         StringBuilder sb = new StringBuilder();
@@ -35,7 +42,6 @@ public class FileHandler {
             sb.append("\n");
         }
         sb.append("  }\n");
-
         sb.append("},\n");
 
         try (FileWriter fw = new FileWriter(filePath, true)) {
@@ -44,12 +50,41 @@ public class FileHandler {
             System.out.println("Error writing to file: " + e.getMessage());
         }
     }
-    public static void clearFile(String filePath) {
-        try (FileWriter fw = new FileWriter(filePath, false)) {
-            fw.write(""); // Overwrite with nothing
+
+    // 👉 NEW METHOD: Save users to JSON
+    public static void saveUsers(List<User> users, String filePath) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filePath))) {
+            pw.println("[");
+            for (int i = 0; i < users.size(); i++) {
+                User u = users.get(i);
+                pw.printf("  { \"id\": \"%s\", \"name\": \"%s\" }", u.getId(), u.getName());
+                if (i < users.size() - 1) pw.println(",");
+                else pw.println();
+            }
+            pw.println("]");
         } catch (IOException e) {
-            System.out.println("Error clearing file: " + e.getMessage());
+            System.out.println("Error saving users: " + e.getMessage());
         }
     }
-    
+
+    // 👉 NEW METHOD: Load users from JSON
+    public static List<User> loadUsers(String filePath) {
+        List<User> users = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            String id = "", name = "";
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("\"id\"")) {
+                    id = line.split(":")[1].trim().replace("\"", "").replace(",", "");
+                } else if (line.startsWith("\"name\"")) {
+                    name = line.split(":")[1].trim().replace("\"", "").replace(",", "");
+                    users.add(new User(id, name));
+                }
+            }
+        } catch (IOException e) {
+            // ignore if file doesn't exist
+        }
+        return users;
+    }
 }
