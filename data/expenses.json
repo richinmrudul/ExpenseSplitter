@@ -1,28 +1,11 @@
 {
-  "description": "Lunch at beach shack",
+  "description": "s",
   "payer": "Richi",
-  "amount": 150.0,
+  "amount": 1000.0,
   "participants": [
-    "Richi",
-    "Alex",
     "Sam"
   ],
   "splitDetails": {
-    "Sam": 50.0,
-    "Alex": 50.0
-  }
-},
-{
-  "description": "Taxi ride",
-  "payer": "Alex",
-  "amount": 90.0,
-  "participants": [
-    "Richi",
-    "Alex",
-    "Sam"
-  ],
-  "splitDetails": {
-    "Sam": 30.0,
-    "Richi": 30.0
+    "Sam": 1000.0
   }
 },
