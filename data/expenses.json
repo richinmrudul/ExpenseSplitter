@@ -1,11 +1,11 @@
 {
-  "description": "s",
-  "payer": "Richi",
+  "description": "food",
+  "payer": "Richin",
   "amount": 1000.0,
   "participants": [
-    "Sam"
+    "Adwin"
   ],
   "splitDetails": {
-    "Sam": 1000.0
+    "Adwin": 1000.0
   }
 },

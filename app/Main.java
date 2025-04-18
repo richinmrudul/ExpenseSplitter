@@ -10,28 +10,18 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        FileHandler.clearFile("data/expenses.json"); // Clear file on startup
+        FileHandler.clearFile("data/expenses.json");
 
-        // Sample users
-        User u1 = new User("u1", "Richi");
-        User u2 = new User("u2", "Alex");
-        User u3 = new User("u3", "Sam");
-
-        List<User> allUsers = Arrays.asList(u1, u2, u3);
+        List<User> allUsers = new ArrayList<>();
         Map<String, User> userMap = new HashMap<>();
-        for (User u : allUsers) userMap.put(u.getName().toLowerCase(), u);
-
-        Group group = new Group("Trip to Goa");
-        group.addUser(u1);
-        group.addUser(u2);
-        group.addUser(u3);
-
+        Group group = new Group("Default Group");
         ExpenseService expenseService = new ExpenseService();
 
         System.out.println("💸 Welcome to Expense Splitter CLI");
 
         while (true) {
-            System.out.println("\n1. Add Expense");
+            System.out.println("\n0. Add User");
+            System.out.println("1. Add Expense");
             System.out.println("2. Show Balances");
             System.out.println("3. Settle Up");
             System.out.println("4. Exit");
@@ -46,12 +36,33 @@ public class Main {
             }
 
             switch (choice) {
+                case 0 -> {
+                    System.out.print("Enter new user name: ");
+                    String name = scanner.nextLine().trim();
+                    String key = name.toLowerCase();
+                    if (userMap.containsKey(key)) {
+                        System.out.println("❗ User already exists.");
+                        break;
+                    }
+                    String id = "u" + (allUsers.size() + 1);
+                    User user = new User(id, name);
+                    allUsers.add(user);
+                    userMap.put(key, user);
+                    group.addUser(user);
+                    System.out.println("✅ User added: " + name);
+                }
+
                 case 1 -> {
+                    if (allUsers.isEmpty()) {
+                        System.out.println("❌ No users found. Add users first.");
+                        break;
+                    }
+
                     System.out.print("Enter payer name: ");
                     String payerName = scanner.nextLine().toLowerCase();
                     User payer = userMap.get(payerName);
                     if (payer == null) {
-                        System.out.println("❌ Payer not found. Please enter a valid user.");
+                        System.out.println("❌ Payer not found.");
                         break;
                     }
 
@@ -76,16 +87,27 @@ public class Main {
                     }
 
                     if (participants.isEmpty()) {
-                        System.out.println("❌ No valid participants found. Please enter valid user names.");
+                        System.out.println("❌ No valid participants found.");
                         break;
                     }
 
                     expenseService.addExpense(payer, amount, participants, description);
                 }
 
-                case 2 -> expenseService.showBalances();
+                case 2 -> {
+                    if (allUsers.isEmpty()) {
+                        System.out.println("❌ No users available.");
+                        break;
+                    }
+                    expenseService.showBalances();
+                }
 
                 case 3 -> {
+                    if (allUsers.isEmpty()) {
+                        System.out.println("❌ No users available.");
+                        break;
+                    }
+
                     System.out.print("Who is paying? ");
                     String payerName = scanner.nextLine().toLowerCase();
                     User payer = userMap.get(payerName);
